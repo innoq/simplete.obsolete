@@ -47,10 +47,16 @@ AutoComplete.prototype.onSelect = function(ev, item) {
 };
 
 AutoComplete.prototype.onKeydown = function(ev) {
+	var key = ev.keyCode;
+
 	if(!this.active) {
+		if(key === 40) { // down
+			this.load();
+		}
 		return;
 	}
-	switch(ev.keyCode) {
+
+	switch(key) {
 		case 13: // Enter
 			this.results.find(".selected").click(); // XXX: hacky?
 			break;
