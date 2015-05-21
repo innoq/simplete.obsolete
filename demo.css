@@ -1,0 +1,60 @@
+body {
+	width: 80%;
+	margin: 1em auto;
+	font-family: sans-serif;
+}
+
+small {
+	color: #777;
+}
+
+form {
+	position: relative;
+	width: 10em;
+}
+
+.suggestions {
+	position: absolute;
+	min-width: 100%;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 5px;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.suggestions.hidden {
+	display: none;
+}
+
+.suggestions ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+.suggestions p,
+.suggestions li {
+	padding: 0.5em 1em;
+}
+
+.suggestions li {
+	cursor: pointer;
+}
+
+.suggestions li:hover,
+.suggestions li.selected {
+	color: #FFF;
+	background-color: #0081C2;
+	background-image: linear-gradient(to bottom, #0088CC, #0077B3);
+	background-repeat: repeat-x;
+}
+
+.suggestions small {
+	display: block;
+}
+
+.suggestions li:hover small,
+.suggestions li.selected small {
+	color: #FFf;
+}

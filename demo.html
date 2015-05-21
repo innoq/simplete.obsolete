@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Simplete - ROCAful autocompletion</title>
+	<link rel="stylesheet" href="demo.css">
+</head>
+
+<body>
+	<h1>
+		Simplete - <a href="http://roca-style.org">ROCA</a>ful autocompletion
+	</h1>
+	<p>simple and lightweight</p>
+
+	<form action="results" method="get">
+		<input type="search" class="autocomplete">
+	</form>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
+	<script src="simplete.js"></script>
+	<script>
+	(function($) {
+
+	// simulate server responses
+	$(document).ajaxSend(function(ev, xhr, options) {
+		var responses = ["files", "none", "people", "samples"];
+		var index = Math.floor(Math.random() * responses.length);
+		options.url = "results/" + responses[index] + ".html";
+	});
+	// simulate network latency
+	var ajax = $.ajax;
+	$.ajax = function() {
+		var req = ajax.apply(this, arguments);
+		var done = req.done;
+		req.done = function(fn) {
+			return done.call(req, function() {
+				var self = this;
+				var args = arguments;
+				setTimeout(function() {
+					fn.apply(self, args);
+				}, Math.random() * 1000 / 2);
+			});
+		};
+		return req;
+	};
+
+	simplete(".autocomplete");
+
+	}(jQuery));
+	</script>
+</body>
+
+</html>
