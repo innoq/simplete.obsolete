@@ -12,9 +12,22 @@
 		<a href="https://github.com/innoq/simplete">Simplete</a> &mdash;
 		<a href="http://roca-style.org">ROCA</a>ful autocompletion
 	</h1>
-	<p>simple and lightweight</p>
+	<p>simple, lightweight and flexible</p>
 
-	<form action="results" method="get">
+	<p>
+		please note that results are fake (simulating server responses with
+		static pages)
+	</p>
+
+	<h3>Files</h3>
+	<p>this demonstrates arbitrary result rendering</p>
+	<form action="results/files" method="get">
+		<input type="search" class="autocomplete">
+	</form>
+
+	<h3>People</h3>
+	<p>this demonstrates linked results</p>
+	<form action="results/people" method="get">
 		<input type="search" class="autocomplete">
 	</form>
 
@@ -25,9 +38,26 @@
 
 	// simulate server responses
 	$(document).ajaxSend(function(ev, xhr, options) {
-		var responses = ["files", "none", "people", "samples"];
-		var index = Math.floor(Math.random() * responses.length);
-		options.url = "results/" + responses[index] + ".html";
+		var chars = $(document.activeElement).val().length; // XXX: brittle
+		var index = {
+			0: 5,
+			1: 5,
+			2: 5,
+			3: 4,
+			4: 4,
+			5: 3,
+			6: 3,
+			7: 2,
+			8: 2,
+			9: 1,
+			10: 1
+		}
+		index = index[chars];
+		if(index) {
+			options.url += index + ".html";
+		} else {
+			options.url = "results/none.html";
+		}
 	});
 	// simulate network latency
 	var ajax = $.ajax;
@@ -46,7 +76,9 @@
 		return req;
 	};
 
-	simplete(".autocomplete");
+	$(".autocomplete").each(function(i, field) {;
+		simplete(field);
+	});
 
 	}(jQuery));
 	</script>
