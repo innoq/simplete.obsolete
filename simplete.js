@@ -42,7 +42,14 @@ AutoComplete.prototype.onSelect = function(ev, item) {
 	if(value === undefined) {
 		value = item.text().trim();
 	}
-	this.field.val(value);
+
+	this.field.val(value).focus();
+	// move cursor to end
+	var field = this.field[0];
+	if(field.setSelectionRange) {
+		field.setSelectionRange(value.length, value.length);
+	}
+
 	this.close();
 };
 
