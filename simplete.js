@@ -1,13 +1,17 @@
 simplete = (function($) {
 
+// `options.autoselect` is either "first" or "only", pre-selecting the first
+// entry either always or only if there's only a single result
+//
 // TODO:
 // * `minChars` option
 // * keyboard controls
 // * document (especially WRT expected server response)
 // * ARIA attributes (cf. Awesomplete)
 // * avoid jQuery dependency
-function AutoComplete(field) {
+function AutoComplete(field, options) {
 	this.field = field = field.jquery ? field : $(field);
+	this.options = options || {};
 	this.form = field.closest("form");
 
 	var container = $("<div />");
@@ -109,6 +113,15 @@ AutoComplete.prototype.select = function(reverse) { // TODO: rename
 AutoComplete.prototype.open = function(html) {
 	this.results.html(html).removeClass("hidden");
 	this.active = true;
+	switch(this.options.autoselect) {
+		case "first":
+			this.select();
+			break;
+		case "only":
+			if(this.results.find("li").length === 1) { // XXX: breaks encapsulation
+				this.select();
+			}
+	}
 };
 
 AutoComplete.prototype.close = function() {
@@ -116,8 +129,8 @@ AutoComplete.prototype.close = function() {
 	delete this.active;
 };
 
-return function(field) {
-	new AutoComplete(field);
+return function(field, options) {
+	new AutoComplete(field, options);
 };
 
 }(jQuery));
