@@ -1,6 +1,7 @@
 "use strict";
 
 var $ = require("jquery");
+var debounce = require("uitil/debounce");
 
 module.exports = function(field, options) {
 	new AutoComplete(field, options);
@@ -10,6 +11,7 @@ exports.AutoComplete = AutoComplete;
 
 // `options.autoselect` is either "first" or "only", pre-selecting the first
 // entry either always or only if there's only a single result
+// `options.delay` is the debounce delay in milliseconds
 //
 // TODO:
 // * `minChars` option
@@ -19,7 +21,10 @@ exports.AutoComplete = AutoComplete;
 // * avoid jQuery dependency
 function AutoComplete(field, options) {
 	this.field = field = field.jquery ? field : $(field);
-	this.options = options || {};
+
+	this.options = options = options || {};
+	options.delay = options.delay || 250;
+
 	this.form = field.closest("form");
 
 	var container = $("<div />");
@@ -28,7 +33,7 @@ function AutoComplete(field, options) {
 	this.close();
 
 	var self = this;
-	field.on("focus input", this.load.bind(this)). // TODO: debounce
+	field.on("focus input", debounce(options.delay, this.load.bind(this))).
 		on("blur", function(ev) {
 			if(!self.selecting) { // see "mousedown" handler
 				self.close();
