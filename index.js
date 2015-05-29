@@ -4,7 +4,7 @@
 var $ = require("jquery");
 var debounce = require("uitil/debounce");
 
-module.exports = function(field, options) {
+module.exports = exports = function(field, options) {
 	new Simplete(field, options);
 };
 
