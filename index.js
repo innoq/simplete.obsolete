@@ -4,10 +4,10 @@ var $ = require("jquery");
 var debounce = require("uitil/debounce");
 
 module.exports = function(field, options) {
-	new AutoComplete(field, options);
+	new Simplete(field, options);
 };
 
-exports.AutoComplete = AutoComplete;
+exports.Simplete = Simplete;
 
 // `options.autoselect` is either "first" or "only", pre-selecting the first
 // entry either always or only if there's only a single result
@@ -19,7 +19,7 @@ exports.AutoComplete = AutoComplete;
 // * document (especially WRT expected server response)
 // * ARIA attributes (cf. Awesomplete)
 // * avoid jQuery dependency
-function AutoComplete(field, options) {
+function Simplete(field, options) {
 	this.field = field = field.jquery ? field : $(field);
 
 	this.options = options = options || {};
@@ -53,7 +53,7 @@ function AutoComplete(field, options) {
 	});
 };
 
-AutoComplete.prototype.onSelect = function(ev, item) {
+Simplete.prototype.onSelect = function(ev, item) {
 	item = $(item);
 	var value = item.attr("data-value"); // TODO: configurable
 	if(value === undefined) {
@@ -70,7 +70,7 @@ AutoComplete.prototype.onSelect = function(ev, item) {
 	this.close();
 };
 
-AutoComplete.prototype.onKeydown = function(ev) {
+Simplete.prototype.onKeydown = function(ev) {
 	var key = ev.keyCode;
 
 	if(!this.active) {
@@ -99,7 +99,7 @@ AutoComplete.prototype.onKeydown = function(ev) {
 	ev.preventDefault();
 };
 
-AutoComplete.prototype.load = function() {
+Simplete.prototype.load = function() {
 	var form = this.form.addClass("pending");
 	var req = $.ajax({
 		type: form.attr("method") || "GET",
@@ -114,7 +114,7 @@ AutoComplete.prototype.load = function() {
 	});
 };
 
-AutoComplete.prototype.select = function(reverse) { // TODO: rename
+Simplete.prototype.select = function(reverse) { // TODO: rename
 	// TODO: configurable selectors (`li`, `.selected`)
 	var item = this.results.find(".selected");
 	item = item.length ?
@@ -123,7 +123,7 @@ AutoComplete.prototype.select = function(reverse) { // TODO: rename
 	item.addClass("selected");
 };
 
-AutoComplete.prototype.open = function(html) {
+Simplete.prototype.open = function(html) {
 	this.results.html(html).removeClass("hidden");
 	this.active = true;
 	switch(this.options.autoselect) {
@@ -137,7 +137,7 @@ AutoComplete.prototype.open = function(html) {
 	}
 };
 
-AutoComplete.prototype.close = function() {
+Simplete.prototype.close = function() {
 	this.results.empty().addClass("hidden");
 	delete this.active;
 };
