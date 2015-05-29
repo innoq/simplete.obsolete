@@ -8,6 +8,7 @@ module.exports = function(field, options) {
 };
 
 exports.Simplete = Simplete;
+exports.debounce = debounce; // for non-CommonJS users
 
 // `options.autoselect` is either "first" or "only", pre-selecting the first
 // entry either always or only if there's only a single result
