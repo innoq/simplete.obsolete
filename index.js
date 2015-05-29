@@ -14,13 +14,8 @@ exports.debounce = debounce; // for non-CommonJS users
 // `options.autoselect` is either "first" or "only", pre-selecting the first
 // entry either always or only if there's only a single result
 // `options.delay` is the debounce delay in milliseconds
-//
-// TODO:
-// * `minChars` option
-// * keyboard controls
-// * document (especially WRT expected server response)
-// * ARIA attributes (cf. Awesomplete)
-// * avoid jQuery dependency
+// `options.onSelect` is invoked whenever a suggestion is selected by the
+// user and passed both the value and the respective DOM node
 function Simplete(field, options) {
 	this.field = field = field.jquery ? field : $(field);
 
@@ -55,11 +50,11 @@ function Simplete(field, options) {
 	});
 }
 
-Simplete.prototype.onSelect = function(ev, item) {
-	item = $(item);
-	var value = item.attr("data-value"); // TODO: configurable
-	if(value === undefined) {
-		value = item.text().trim();
+Simplete.prototype.onSelect = function(ev, node) {
+	var el = $(node);
+	var value = el.attr("data-value"); // TODO: configurable
+	if(value === undefined) { // XXX: YAGNI?
+		value = el.text().trim();
 	}
 
 	this.field.val(value).focus();
@@ -67,6 +62,11 @@ Simplete.prototype.onSelect = function(ev, item) {
 	var field = this.field[0];
 	if(field.setSelectionRange) {
 		field.setSelectionRange(value.length, value.length);
+	}
+
+	var notify = this.options.onSelect;
+	if(notify) {
+		notify(value, node);
 	}
 
 	this.close();
