@@ -16,11 +16,13 @@ exports.debounce = debounce; // for non-CommonJS users
 // `options.delay` is the debounce delay in milliseconds
 // `options.onSelect` is invoked whenever a suggestion is selected by the
 // user and passed both the value and the respective DOM node
+// `options.itemSelector` is used to identify suggestions in the HTML response
 function Simplete(field, options) {
 	this.field = field = field.jquery ? field : $(field);
 
 	this.options = options = options || {};
 	options.delay = options.delay || 250;
+	options.itemSelector = options.itemSelector || "li";
 
 	this.form = field.closest("form");
 
@@ -38,7 +40,7 @@ function Simplete(field, options) {
 			delete self.selecting;
 		}).
 		on("keydown", this.onKeydown.bind(this));
-	this.results.on("mousedown click", "li", function(ev) { // TODO: configurable selector
+	this.results.on("mousedown click", options.itemSelector, function(ev) {
 		// "blur" fires before "click", but after "mousedown" - so we use that
 		// to avoid closing the dialog before the click could be registered
 		if(ev.type === "mousedown") { // suppress blur
@@ -117,11 +119,11 @@ Simplete.prototype.load = function() {
 };
 
 Simplete.prototype.select = function(reverse) { // TODO: rename
-	// TODO: configurable selectors (`li`, `.selected`)
-	var item = this.results.find(".selected");
+	var item = this.results.find(".selected"); // TODO: configurable
 	item = item.length ?
 		item.removeClass("selected")[reverse ? "prev" : "next"]() :
-		 this.results.find("li:" + (reverse ? "last" : "first"));
+		this.results.
+			find(this.options.itemSelector)[reverse ? "last" : "first"]();
 	item.addClass("selected");
 };
 
@@ -133,7 +135,7 @@ Simplete.prototype.open = function(html) {
 			this.select();
 			break;
 		case "only":
-			if(this.results.find("li").length === 1) { // XXX: breaks encapsulation
+			if(this.results.find(this.options.itemSelector).length === 1) {
 				this.select();
 			}
 			break;
