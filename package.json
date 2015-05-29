@@ -1,0 +1,25 @@
+{
+  "name": "simplete",
+  "version": "0.8.0",
+  "description": "ROCAful autocompletion",
+  "author": "FND",
+  "license": "Apache License 2, version 2.0",
+  "homepage": "https://github.com/innoq/simplete",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/innoq/simplete.git"
+  },
+  "bugs": {
+    "url": "https://github.com/innoq/simplete/issues"
+  },
+  "scripts": {
+    "autocompile": "webpack --progress --colors --watch",
+    "dist": "webpack && webpack --config webpack.config.min.js"
+  },
+  "dependencies": {
+    "jquery": "^2.1.4"
+  },
+  "devDependencies": {
+    "webpack": "^1.9.10"
+  }
+}

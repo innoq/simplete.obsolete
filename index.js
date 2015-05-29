@@ -1,4 +1,12 @@
-simplete = (function($) {
+"use strict";
+
+var $ = require("jquery");
+
+module.exports = function(field, options) {
+	new AutoComplete(field, options);
+};
+
+exports.AutoComplete = AutoComplete;
 
 // `options.autoselect` is either "first" or "only", pre-selecting the first
 // entry either always or only if there's only a single result
@@ -128,9 +136,3 @@ AutoComplete.prototype.close = function() {
 	this.results.empty().addClass("hidden");
 	delete this.active;
 };
-
-return function(field, options) {
-	new AutoComplete(field, options);
-};
-
-}(jQuery));
