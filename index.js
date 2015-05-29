@@ -17,12 +17,14 @@ exports.debounce = debounce; // for non-CommonJS users
 // `options.onSelect` is invoked whenever a suggestion is selected by the
 // user and passed both the value and the respective DOM node
 // `options.itemSelector` is used to identify suggestions in the HTML response
+// `options.selectedClass` is the class assigned to selected items
 function Simplete(field, options) {
 	this.field = field = field.jquery ? field : $(field);
 
 	this.options = options = options || {};
 	options.delay = options.delay || 250;
 	options.itemSelector = options.itemSelector || "li";
+	options.selectedClass = options.selectedClass || "selected";
 
 	this.form = field.closest("form");
 
@@ -54,7 +56,7 @@ function Simplete(field, options) {
 
 Simplete.prototype.onSelect = function(ev, node) {
 	var el = $(node);
-	var value = el.attr("data-value"); // TODO: configurable
+	var value = el.attr("data-value"); // TODO: configurable?
 	if(value === undefined) { // XXX: YAGNI?
 		value = el.text().trim();
 	}
@@ -86,7 +88,7 @@ Simplete.prototype.onKeydown = function(ev) {
 
 	switch(key) {
 		case 13: // Enter
-			this.results.find(".selected").click(); // XXX: hacky?
+			this.results.find("." + this.options.selectedClass).click(); // XXX: hacky?
 			break;
 		case 27: // ESC
 			this.close();
@@ -119,12 +121,13 @@ Simplete.prototype.load = function() {
 };
 
 Simplete.prototype.select = function(reverse) { // TODO: rename
-	var item = this.results.find(".selected"); // TODO: configurable
+	var cls = this.options.selectedClass;
+	var item = this.results.find("." + cls);
 	item = item.length ?
-		item.removeClass("selected")[reverse ? "prev" : "next"]() :
+		item.removeClass(cls)[reverse ? "prev" : "next"]() :
 		this.results.
 			find(this.options.itemSelector)[reverse ? "last" : "first"]();
-	item.addClass("selected");
+	item.addClass(cls);
 };
 
 Simplete.prototype.open = function(html) {
