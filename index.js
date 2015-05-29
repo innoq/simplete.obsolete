@@ -20,6 +20,7 @@ exports.debounce = debounce; // for non-CommonJS users
 // `options.selectedClass` is the class assigned to selected items
 function Simplete(field, options) {
 	this.field = field = field.jquery ? field : $(field);
+	this.field.attr("autocomplete", "off");
 
 	this.options = options = options || {};
 	options.delay = options.delay || 250;
