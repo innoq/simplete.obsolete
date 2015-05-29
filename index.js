@@ -1,3 +1,4 @@
+/*jslint vars: true, node: true, white: true */
 "use strict";
 
 var $ = require("jquery");
@@ -52,7 +53,7 @@ function Simplete(field, options) {
 
 		self.onSelect(ev, this);
 	});
-};
+}
 
 Simplete.prototype.onSelect = function(ev, item) {
 	item = $(item);
@@ -135,6 +136,7 @@ Simplete.prototype.open = function(html) {
 			if(this.results.find("li").length === 1) { // XXX: breaks encapsulation
 				this.select();
 			}
+			break;
 	}
 };
 
