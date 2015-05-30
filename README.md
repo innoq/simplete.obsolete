@@ -1,4 +1,4 @@
-Simplete - ROCAful autocompletion
+Simplete _/sɪmˈpliːt/_ - ROCAful autocompletion
 
 
 Getting Started
