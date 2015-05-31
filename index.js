@@ -123,12 +123,17 @@ Simplete.prototype.load = function() {
 
 Simplete.prototype.select = function(reverse) { // TODO: rename
 	var cls = this.options.selectedClass;
-	var item = this.results.find("." + cls);
-	item = item.length ?
-		item.removeClass(cls)[reverse ? "prev" : "next"]() :
-		this.results.
-			find(this.options.itemSelector)[reverse ? "last" : "first"]();
-	item.addClass(cls);
+	var results = this.results.find(this.options.itemSelector);
+	var item = results.filter("." + cls).removeClass(cls);
+
+	var index = 0;
+	if(item.length) {
+		index = results.index(item);
+		index = index === -1 ? 0 : index + (reverse ? -1 : 1);
+	} else if(reverse) {
+		index = -1;
+	}
+	item = results.eq(index).addClass(cls);
 };
 
 Simplete.prototype.open = function(html) {
