@@ -27,8 +27,6 @@ function Simplete(field, options) {
 	options.itemSelector = options.itemSelector || "li";
 	options.selectedClass = options.selectedClass || "selected";
 
-	this.form = field.closest("form");
-
 	var container = $("<div />");
 	this.results = $('<div class="suggestions hidden" />').appendTo(container);
 	container.insertBefore(field).prepend(field);
@@ -107,7 +105,7 @@ Simplete.prototype.onKeydown = function(ev) {
 };
 
 Simplete.prototype.load = function() {
-	var form = this.form.addClass("pending");
+	var form = this.field.closest("form").addClass("pending");
 	var req = $.ajax({
 		type: form.attr("method") || "GET",
 		url: form.attr("action"),
