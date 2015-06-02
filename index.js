@@ -105,11 +105,17 @@ Simplete.prototype.onKeydown = function(ev) {
 };
 
 Simplete.prototype.load = function() {
-	var form = this.field.closest("form").addClass("pending");
+	var field = this.field;
+	var form = field.closest("form").addClass("pending");
+
+	var method = field.attr("data-formmethod");
+	var uri = field.attr("data-formaction");
+	var scope = field.attr("data-scope") === "self" ? field : form;
+
 	var req = $.ajax({
-		type: form.attr("method") || "GET",
-		url: form.attr("action"),
-		data: form.serialize(),
+		type: method || form.attr("method") || "GET",
+		url: uri || form.attr("action"),
+		data: scope.serialize(),
 		dataType: "html"
 	});
 	req.done(this.open.bind(this));
