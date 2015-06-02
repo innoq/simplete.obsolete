@@ -76,7 +76,7 @@ Simplete.prototype.onSelect = function(ev, node) {
 };
 
 Simplete.prototype.onKeydown = function(ev) {
-	var key = ev.keyCode;
+	var key = ev.which;
 
 	if(!this.active) {
 		if(key === 40) { // down
