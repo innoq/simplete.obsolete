@@ -13,7 +13,7 @@
     "url": "https://github.com/innoq/simplete/issues"
   },
   "scripts": {
-    "autocompile": "webpack --progress --colors --watch",
+    "dev": "webpack --progress --colors --watch",
     "dist": "webpack && webpack --config webpack.config.min.js"
   },
   "dependencies": {
