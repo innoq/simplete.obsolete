@@ -93,10 +93,10 @@ Simplete.prototype.onKeydown = function(ev) {
 			this.close();
 			break;
 		case 38: // up
-			this.select(true);
+			this.cycle(true);
 			break;
 		case 40: // down
-			this.select();
+			this.cycle();
 			break;
 		default:
 			return; // avoid `.preventDefault` below
@@ -125,7 +125,7 @@ Simplete.prototype.load = function() {
 	});
 };
 
-Simplete.prototype.select = function(reverse) { // TODO: rename
+Simplete.prototype.cycle = function(reverse) {
 	var cls = this.options.selectedClass;
 	var results = this.results.find(this.options.itemSelector);
 	var item = results.filter("." + cls).removeClass(cls);
@@ -145,11 +145,11 @@ Simplete.prototype.open = function(html) {
 	this.active = true;
 	switch(this.options.autoselect) {
 		case "first":
-			this.select();
+			this.cycle();
 			break;
 		case "only":
 			if(this.results.find(this.options.itemSelector).length === 1) {
-				this.select();
+				this.cycle();
 			}
 			break;
 	}
