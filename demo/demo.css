@@ -13,6 +13,10 @@ form {
 	width: 10em;
 }
 
+.pending input {
+	opacity: 0.5; /* XXX: overly simplistic */
+}
+
 .suggestions {
 	position: absolute;
 	min-width: 100%;
@@ -29,6 +33,15 @@ form {
 	display: none;
 }
 
+.suggestions h3 {
+	margin: 0.5em 0;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-width: 1px 0;
+	padding: 0.2em 0.5em;
+	color: rgba(0, 0, 0, 0.4); /* XXX: insufficient contrast; a11y */
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
 .suggestions ul {
 	margin: 0;
 	padding: 0;
@@ -38,6 +51,10 @@ form {
 .suggestions p,
 .suggestions li {
 	padding: 0.5em 1em;
+}
+
+.suggestions .alert {
+	margin: 0;
 }
 
 .suggestions li {
@@ -56,7 +73,14 @@ form {
 	display: block;
 }
 
+.suggestions li:hover a,
+.suggestions li.selected a,
 .suggestions li:hover small,
 .suggestions li.selected small {
 	color: #FFf;
+}
+
+.suggestions li:hover a,
+.suggestions li.selected a {
+	text-decoration: none;
 }

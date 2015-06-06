@@ -15,73 +15,22 @@
 	<p>simple, lightweight and flexible</p>
 
 	<p>
-		please note that results are fake (simulating server responses with
-		static pages)
+		Please note that in this demo, results are filtered client-side,
+		simulating dynamic server responses despite the use of static pages.
 	</p>
 
-	<h3>Files</h3>
-	<p>this demonstrates arbitrary result rendering</p>
-	<form action="results/files" method="get">
-		<input type="search" class="autocomplete">
+	<form action="results.html" method="get">
+		<input type="search" name="query" class="autocomplete" autofocus>
 	</form>
 
-	<h3>People</h3>
-	<p>this demonstrates linked results</p>
-	<form action="results/people" method="get">
-		<input type="search" class="autocomplete">
-	</form>
+	<p>
+		Please note that the people category effectively constitutes results
+		rather than suggestions.
+	</p>
 
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
 	<script src="../dist/simplete.js"></script>
-	<script>
-	(function($) {
-
-	// simulate server responses
-	$(document).ajaxSend(function(ev, xhr, options) {
-		var chars = $(document.activeElement).val().length; // XXX: brittle
-		var index = {
-			0: 5,
-			1: 5,
-			2: 5,
-			3: 4,
-			4: 4,
-			5: 3,
-			6: 3,
-			7: 2,
-			8: 2,
-			9: 1,
-			10: 1
-		}
-		index = index[chars];
-		if(index) {
-			options.url += index + ".html";
-		} else {
-			options.url = "results/none.html";
-		}
-	});
-	// simulate network latency
-	var ajax = $.ajax;
-	$.ajax = function() {
-		var req = ajax.apply(this, arguments);
-		var done = req.done;
-		req.done = function(fn) {
-			return done.call(req, function() {
-				var self = this;
-				var args = arguments;
-				setTimeout(function() {
-					fn.apply(self, args);
-				}, Math.random() * 1000 / 2);
-			});
-		};
-		return req;
-	};
-
-	$(".autocomplete").each(function(i, field) {;
-		simplete(field);
-	});
-
-	}(jQuery));
-	</script>
+	<script src="demo.js"></script>
 </body>
 
 </html>
