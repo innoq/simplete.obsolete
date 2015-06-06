@@ -87,7 +87,16 @@ Simplete.prototype.onKeydown = function(ev) {
 
 	switch(key) {
 		case 13: // Enter
-			this.results.find("." + this.options.selectedClass).click(); // XXX: hacky?
+			var item = this.results.find("." + this.options.selectedClass);
+
+			 // support for links -- XXX: special-casing
+			var link = item.children();
+			if(link.length === 1 && link.is("a")) {
+				item = link[0].click(); // XXX: hacky?
+				return;
+			}
+
+			item.click(); // XXX: hacky?
 			break;
 		case 27: // ESC
 			this.close();
