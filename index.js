@@ -27,7 +27,7 @@ function Simplete(field, options) {
 	options.itemSelector = options.itemSelector || "li";
 	options.selectedClass = options.selectedClass || "selected";
 
-	var container = $("<div />");
+	var container = $('<div class="simplete" />');
 	this.results = $('<div class="suggestions hidden" />').appendTo(container);
 	container.insertBefore(field).prepend(field);
 	this.close();
