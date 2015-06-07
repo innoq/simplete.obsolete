@@ -14,13 +14,18 @@
   },
   "scripts": {
     "dev": "webpack --progress --colors --watch",
-    "dist": "webpack && webpack --config webpack.config.min.js"
+    "dist": "webpack && webpack --config webpack.config.min.js",
+    "test": "webpack --config webpack.config.tests.js && node-qunit-phantomjs test/index.html"
   },
   "dependencies": {
     "jquery": "^2.1.4",
     "uitil": "git://github.com/FND/uitil.git"
   },
   "devDependencies": {
+    "blanket": "^1.1.7",
+    "jquery": "^2.1.4",
+    "node-qunit-phantomjs": "^1.2.1",
+    "qunitjs": "^1.18.0",
     "webpack": "^1.9.10"
   }
 }

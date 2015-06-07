@@ -9,6 +9,7 @@ Getting Started
 * `npm run dev` starts a background process to automatically update the
   development bundle
 * `npm run dist` creates distribution bundles
+* `npm run test` executes the test suite
 
 
 Alternatives
