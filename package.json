@@ -3,7 +3,7 @@
   "version": "0.8.0",
   "description": "ROCAful autocompletion",
   "author": "FND",
-  "license": "Apache License 2, version 2.0",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/innoq/simplete",
   "repository": {
     "type": "git",
