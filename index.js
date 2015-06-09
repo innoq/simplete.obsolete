@@ -13,6 +13,8 @@ exports.debounce = debounce; // for non-CommonJS users
 
 // `options.autoselect` is either "first" or "only", pre-selecting the first
 // entry either always or only if there's only a single result
+// `options.minLength` is the minimum number of characters users must enter
+// before a query is triggered
 // `options.delay` is the debounce delay in milliseconds
 // `options.onSelect` is invoked whenever a suggestion is selected by the
 // user and passed both the value and the respective DOM node
@@ -24,6 +26,7 @@ function Simplete(field, options) {
 
 	this.options = options = options || {};
 	options.delay = options.delay || 250;
+	options.minLength = options.minLength || 0;
 	options.itemSelector = options.itemSelector || "li";
 	options.selectedClass = options.selectedClass || "selected";
 
@@ -115,6 +118,9 @@ Simplete.prototype.onKeydown = function(ev) {
 
 Simplete.prototype.load = function() {
 	var field = this.field;
+	if(this.field.val().length < this.options.minLength) {
+		return;
+	}
 	var form = field.closest("form").addClass("pending");
 
 	var method = field.attr("data-formmethod");
