@@ -52,11 +52,25 @@ function Simplete(field, options) {
 			return;
 		}
 
-		self.onSelect(ev, this);
+		return self.onSelect(ev, this);
 	});
 }
 
 Simplete.prototype.onSelect = function(ev, node) {
+	// support for links -- XXX: special-casing
+	var target = $(ev.target);
+	if(target.is("a")) { // user clicked directly on link
+		if(target.attr("href") !== undefined) {
+			return; // let browser handling kick in
+		}
+	} else { // check whether selected item contains exactly one link
+		var link = $("a", node);
+		if(link.length === 1 && link.attr("href") !== undefined) {
+			link[0].click(); // ends up triggering `onSelect` again
+			return;
+		}
+	}
+
 	var el = $(node);
 	var value = el.attr("data-value"); // TODO: configurable?
 	if(value === undefined) { // XXX: YAGNI?
@@ -91,14 +105,6 @@ Simplete.prototype.onKeydown = function(ev) {
 	switch(key) {
 		case 13: // Enter
 			var item = this.results.find("." + this.options.selectedClass);
-
-			 // support for links -- XXX: special-casing
-			var link = item.children();
-			if(link.length === 1 && link.is("a")) {
-				item = link[0].click(); // XXX: hacky?
-				return;
-			}
-
 			item.click(); // XXX: hacky?
 			break;
 		case 27: // ESC
