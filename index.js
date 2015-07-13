@@ -122,6 +122,7 @@ Simplete.prototype.onKeydown = function(ev) {
 	ev.preventDefault();
 };
 
+// TODO: document custom overrides (`data-*`)
 Simplete.prototype.load = function() {
 	var field = this.field;
 	if(this.field.val().length < this.options.minLength) {
@@ -133,10 +134,22 @@ Simplete.prototype.load = function() {
 	var uri = field.attr("data-formaction");
 	var scope = field.attr("data-scope") === "self" ? field : form;
 
+	var params = scope.serializeArray();
+	var customParameter = field.attr("data-parameter");
+	if(customParameter) {
+		var originalParameter = field.attr("name");
+		params.forEach(function(param) {
+			if(param.name === originalParameter) {
+				param.name = customParameter;
+			}
+		});
+	}
+	params = jQuery.param(params);
+
 	var req = $.ajax({
 		type: method || form.attr("method") || "GET",
 		url: uri || form.attr("action"),
-		data: scope.serialize(),
+		data: params,
 		dataType: "html"
 	});
 	req.done(this.open.bind(this));
