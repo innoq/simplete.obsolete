@@ -77,7 +77,11 @@ Simplete.prototype.onSelect = function(ev, node) {
 		value = el.text().trim();
 	}
 
+	// XXX: hacky, but invoking `trigger` with additional parameters does not
+	//      work within the context of another event handler
+	this.suppressLoad = true;
 	this.field.val(value).focus();
+
 	// move cursor to end
 	var field = this.field[0];
 	if(field.setSelectionRange) {
@@ -124,6 +128,11 @@ Simplete.prototype.onKeydown = function(ev) {
 
 // TODO: document custom overrides (`data-*`)
 Simplete.prototype.load = function() {
+	if(this.suppressLoad) { // triggered by `onSelect`
+		delete this.suppressLoad;
+		return;
+	}
+
 	var field = this.field;
 	if(this.field.val().length < this.options.minLength) {
 		return;
