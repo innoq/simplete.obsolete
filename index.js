@@ -21,6 +21,10 @@ exports.debounce = debounce; // for non-CommonJS users
 // `options.itemSelector` is used to identify suggestions in the HTML response
 // `options.selectedClass` is the class assigned to selected items
 function Simplete(field, options) {
+	if(!arguments.length) { // subclassing heuristic; skip initialization
+		return;
+	}
+
 	this.field = field = field.jquery ? field : $(field);
 	this.field.attr("autocomplete", "off");
 
@@ -36,7 +40,7 @@ function Simplete(field, options) {
 	this.close();
 
 	var self = this;
-	field.on("focus input", debounce(options.delay, this.load.bind(this))).
+	field.on("focus input", debounce(options.delay, this.onQuery.bind(this))).
 		on("blur", function(ev) {
 			if(!self.selecting) { // see "mousedown" handler
 				self.close();
@@ -101,7 +105,7 @@ Simplete.prototype.onKeydown = function(ev) {
 
 	if(!this.active) {
 		if(key === 40) { // down
-			this.load();
+			this.onQuery();
 		}
 		return;
 	}
@@ -127,7 +131,7 @@ Simplete.prototype.onKeydown = function(ev) {
 };
 
 // TODO: document custom overrides (`data-*`)
-Simplete.prototype.load = function() {
+Simplete.prototype.onQuery = function() {
 	if(this.suppressLoad) { // triggered by `onSelect`
 		delete this.suppressLoad;
 		return;
@@ -153,14 +157,9 @@ Simplete.prototype.load = function() {
 			}
 		});
 	}
-	params = jQuery.param(params);
 
-	var req = $.ajax({
-		type: method || form.attr("method") || "GET",
-		url: uri || form.attr("action"),
-		data: params,
-		dataType: "html"
-	});
+	var req = this.load(method || form.attr("method") || "GET",
+			uri || form.attr("action"), params);
 	req.done(this.open.bind(this));
 	//req.fail(function(xhr, status, err) {}) // TODO
 	req.always(function() {
@@ -201,4 +200,14 @@ Simplete.prototype.open = function(html) {
 Simplete.prototype.close = function() {
 	this.results.empty().addClass("hidden");
 	delete this.active;
+};
+
+// returns a jQuery Deferred which resolves to an HTML string
+Simplete.prototype.load = function(method, uri, params) {
+	return $.ajax({
+		type: method,
+		url: uri,
+		data: jQuery.param(params),
+		dataType: "html"
+	});
 };
