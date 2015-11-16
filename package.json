@@ -22,10 +22,10 @@
     "uitil": "git://github.com/FND/uitil.git"
   },
   "devDependencies": {
-    "blanket": "^1.1.7",
+    "blanket": "^1.2.0",
     "jquery": "^2.1.4",
-    "node-qunit-phantomjs": "^1.2.1",
-    "qunitjs": "^1.18.0",
-    "webpack": "^1.9.10"
+    "node-qunit-phantomjs": "^1.3.0",
+    "qunitjs": "^1.20.0",
+    "webpack": "^1.12.6"
   }
 }
