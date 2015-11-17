@@ -60,27 +60,34 @@ var simplete =
 
 	// `options.autoselect` is either "first" or "only", pre-selecting the first
 	// entry either always or only if there's only a single result
+	// `options.minLength` is the minimum number of characters users must enter
+	// before a query is triggered
 	// `options.delay` is the debounce delay in milliseconds
 	// `options.onSelect` is invoked whenever a suggestion is selected by the
 	// user and passed both the value and the respective DOM node
 	// `options.itemSelector` is used to identify suggestions in the HTML response
 	// `options.selectedClass` is the class assigned to selected items
 	function Simplete(field, options) {
+		if(!arguments.length) { // subclassing heuristic; skip initialization
+			return;
+		}
+
 		this.field = field = field.jquery ? field : $(field);
 		this.field.attr("autocomplete", "off");
 
 		this.options = options = options || {};
 		options.delay = options.delay || 250;
+		options.minLength = options.minLength || 0;
 		options.itemSelector = options.itemSelector || "li";
 		options.selectedClass = options.selectedClass || "selected";
 
-		var container = $("<div />");
+		var container = $('<div class="simplete" />');
 		this.results = $('<div class="suggestions hidden" />').appendTo(container);
 		container.insertBefore(field).prepend(field);
 		this.close();
 
 		var self = this;
-		field.on("focus input", debounce(options.delay, this.load.bind(this))).
+		field.on("focus input", debounce(options.delay, this.onQuery.bind(this))).
 			on("blur", function(ev) {
 				if(!self.selecting) { // see "mousedown" handler
 					self.close();
@@ -96,18 +103,36 @@ var simplete =
 				return;
 			}
 
-			self.onSelect(ev, this);
+			return self.onSelect(ev, this);
 		});
 	}
 
 	Simplete.prototype.onSelect = function(ev, node) {
+		// support for links -- XXX: special-casing
+		var target = $(ev.target);
+		if(target.is("a")) { // user clicked directly on link
+			if(target.attr("href") !== undefined) {
+				return; // let browser handling kick in
+			}
+		} else { // check whether selected item contains exactly one link
+			var link = $("a", node);
+			if(link.length === 1 && link.attr("href") !== undefined) {
+				link[0].click(); // ends up triggering `onSelect` again
+				return;
+			}
+		}
+
 		var el = $(node);
 		var value = el.attr("data-value"); // TODO: configurable?
 		if(value === undefined) { // XXX: YAGNI?
 			value = el.text().trim();
 		}
 
+		// XXX: hacky, but invoking `trigger` with additional parameters does not
+		//      work within the context of another event handler
+		this.suppressLoad = true;
 		this.field.val(value).focus();
+
 		// move cursor to end
 		var field = this.field[0];
 		if(field.setSelectionRange) {
@@ -127,7 +152,7 @@ var simplete =
 
 		if(!this.active) {
 			if(key === 40) { // down
-				this.load();
+				this.onQuery();
 			}
 			return;
 		}
@@ -135,14 +160,6 @@ var simplete =
 		switch(key) {
 			case 13: // Enter
 				var item = this.results.find("." + this.options.selectedClass);
-
-				 // support for links -- XXX: special-casing
-				var link = item.children();
-				if(link.length === 1 && link.is("a")) {
-					item = link[0].click(); // XXX: hacky?
-					return;
-				}
-
 				item.click(); // XXX: hacky?
 				break;
 			case 27: // ESC
@@ -160,20 +177,36 @@ var simplete =
 		ev.preventDefault();
 	};
 
-	Simplete.prototype.load = function() {
+	// TODO: document custom overrides (`data-*`)
+	Simplete.prototype.onQuery = function() {
+		if(this.suppressLoad) { // triggered by `onSelect`
+			delete this.suppressLoad;
+			return;
+		}
+
 		var field = this.field;
+		if(this.field.val().length < this.options.minLength) {
+			return;
+		}
 		var form = field.closest("form").addClass("pending");
 
 		var method = field.attr("data-formmethod");
 		var uri = field.attr("data-formaction");
 		var scope = field.attr("data-scope") === "self" ? field : form;
 
-		var req = $.ajax({
-			type: method || form.attr("method") || "GET",
-			url: uri || form.attr("action"),
-			data: scope.serialize(),
-			dataType: "html"
-		});
+		var params = scope.serializeArray();
+		var customParameter = field.attr("data-parameter");
+		if(customParameter) {
+			var originalParameter = field.attr("name");
+			params.forEach(function(param) {
+				if(param.name === originalParameter) {
+					param.name = customParameter;
+				}
+			});
+		}
+
+		var req = this.load(method || form.attr("method") || "GET",
+				uri || form.attr("action"), params);
 		req.done(this.open.bind(this));
 		//req.fail(function(xhr, status, err) {}) // TODO
 		req.always(function() {
@@ -216,18 +249,28 @@ var simplete =
 		delete this.active;
 	};
 
+	// returns a jQuery Deferred which resolves to an HTML string
+	Simplete.prototype.load = function(method, uri, params) {
+		return $.ajax({
+			type: method,
+			url: uri,
+			data: jQuery.param(params),
+			dataType: "html"
+		});
+	};
+
 
 /***/ },
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	module.exports = jQuery;
 
 /***/ },
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	// adapted from StuffJS (https://github.com/bengillies/stuff-js)
+	// adapted from StuffJS <https://github.com/bengillies/stuff-js>
 	module.exports = function(delay, fn) {
 		var timer;
 		return function() {
