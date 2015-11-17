@@ -13,7 +13,7 @@ if(document.location.hostname === "localhost") {
 }
 
 $(".autocomplete").each(function(i, field) {
-	simplete(field);
+	simplete(field, { minLength: 3 });
 });
 
 // inevitably, this is tightly coupled to the server response
