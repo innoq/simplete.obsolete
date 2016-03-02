@@ -33,6 +33,7 @@ function Simplete(field, options) {
 	options.minLength = options.minLength || 0;
 	options.itemSelector = options.itemSelector || "li";
 	options.selectedClass = options.selectedClass || "selected";
+	options.resultWrapper = options.resultWrapper || null;
 
 	var container = $('<div class="simplete" />');
 	this.results = $('<div class="suggestions hidden" />').appendTo(container);
@@ -204,10 +205,18 @@ Simplete.prototype.close = function() {
 
 // returns a jQuery Deferred which resolves to an HTML string
 Simplete.prototype.load = function(method, uri, params) {
+  var resultWrapper = this.options.resultWrapper;
 	return $.ajax({
 		type: method,
 		url: uri,
 		data: jQuery.param(params),
 		dataType: "html"
+	}).then(function(html) {
+		if (resultWrapper) {
+			var filteredResult = $("<div />").html(html).find(resultWrapper);
+			return filteredResult;
+		} else {
+			return html;
+		}
 	});
 };
