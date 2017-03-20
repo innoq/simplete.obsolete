@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import "./suggestions";
 import { dispatchEvent } from "uitil/dom/events";
-import bindMethodContext from "uitil/method_context";
+import bindMethods from "uitil/method_context";
 import debounce from "uitil/debounce";
 
 const DEFAULTS = {
@@ -18,7 +18,7 @@ class SimpleteForm extends HTMLElement {
 	constructor(self) {
 		self = super(self);
 
-		bindMethodContext(self, "onInput", "onResponse");
+		bindMethods(self, "onInput", "onResponse");
 
 		return self;
 	}
@@ -46,6 +46,7 @@ class SimpleteForm extends HTMLElement {
 			delete this.selecting;
 			return;
 		}
+		this.query = this.searchField.value;
 
 		let res = this.submit();
 		if(res === RESET) {
@@ -91,6 +92,16 @@ class SimpleteForm extends HTMLElement {
 			// kick in unless we're in the process of navigating suggestions
 			if(this.navigating === PREVIEW) {
 				dispatchEvent(this, "simplete-confirm"); // TODO: rename?
+				ev.preventDefault();
+			}
+			break;
+		case "Escape":
+		case 27: // Escape
+			let { query } = this;
+			if(query) { // restore original (pre-preview) input
+				this.searchField.value = query;
+				delete this.selecting;
+				dispatchEvent(this, "simplete-abort"); // TODO: rename?
 				ev.preventDefault();
 			}
 			break;
