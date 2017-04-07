@@ -18,8 +18,7 @@
     "test": "webpack --config webpack.config.tests.js && node-qunit-phantomjs test/index.html"
   },
   "dependencies": {
-    "jquery": "^2.1.4",
-    "uitil": "git://github.com/FND/uitil.git"
+    "jquery": "^2.1.4"
   },
   "devDependencies": {
     "blanket": "^1.2.0",

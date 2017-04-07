@@ -2,7 +2,6 @@
 "use strict";
 
 var $ = require("jquery");
-var debounce = require("uitil/debounce");
 
 module.exports = exports = function(field, options) {
 	new Simplete(field, options);
@@ -41,7 +40,7 @@ function Simplete(field, options) {
 	this.close();
 
 	var self = this;
-	field.on("focus input", debounce(options.delay, this.onQuery.bind(this))).
+	field.on("focus input", debounce(options.delay, this, this.onQuery)).
 		on("blur", function(ev) {
 			if(!self.selecting) { // see "mousedown" handler
 				self.close();
@@ -219,4 +218,25 @@ Simplete.prototype.load = function(method, uri, params) {
 			return html;
 		}
 	});
+};
+
+// adapted from StuffJS <https://github.com/bengillies/stuff-js>
+function debounce(delay, ctx, fn) {
+	if(fn === undefined) { // shift arguments
+		fn = ctx;
+		ctx = null;
+	}
+
+	var timer;
+	return function() {
+		var args = arguments;
+		if(timer) {
+			clearTimeout(timer);
+			timer = null;
+		}
+		timer = setTimeout(function() {
+			fn.apply(ctx, args);
+			timer = null;
+		}, delay);
+	};
 };
